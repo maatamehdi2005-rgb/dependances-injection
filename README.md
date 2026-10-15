@@ -1,6 +1,6 @@
 # Activité Pratique N°1 : Inversion de Contrôle (IoC) et Injection des Dépendances (DI)
 
-> **Réalisé par :** **Ilyas SEKHSOUKHI**  
+> **Réalisé par :** **MAATA EL MEHDI**  
 > **Filière :** 2ACI – Architecture JEE et Java avancé  
 > **Cadre :** Activités Pratiques – Inversion de Contrôle (IoC) & Injection des Dépendances (DI)
 
@@ -72,7 +72,7 @@ Le diagramme suivant illustre le découpage en packages, le rôle des interfaces
 classDiagram
     direction TB
 
-    namespace ma.ilyas.dao {
+    namespace ma.mehdi.dao {
         class idao {
             <<interface>>
             +getData() double
@@ -82,13 +82,13 @@ classDiagram
         }
     }
 
-    namespace ma.ilyas.ext {
+    namespace ma.mehdi.ext {
         class daoImplV2 {
             +getData() double
         }
     }
 
-    namespace ma.ilyas.metier {
+    namespace ma.mehdi.metier {
         class imetier {
             <<interface>>
             +calcul() double
@@ -102,7 +102,7 @@ classDiagram
         }
     }
 
-    namespace ma.ilyas.pres {
+    namespace ma.mehdi.pres {
         class pres1 {
             +main(args: String[]) void
         }
@@ -149,7 +149,7 @@ Activite-Pratique-1-Injection-Dependances/
 └── src/
     └── main/
         ├── java/
-        │   └── ma.ilyas/
+        │   └── ma.mehdi/
         │       ├── dao/
         │       │   ├── idao.java                      # Interface du DAO
         │       │   └── daoImpl.java                   # Implémentation DAO Base de Données (@Repository("d"))
@@ -173,20 +173,20 @@ Activite-Pratique-1-Injection-Dependances/
 
 ### 1. Couche DAO (Accès aux Données)
 
-#### Interface `idao.java` (`ma.ilyas.dao`)
+#### Interface `idao.java` (`ma.mehdi.dao`)
 Définit le contrat d'accès aux données :
 ```java
-package ma.ilyas.dao;
+package ma.mehdi.dao;
 
 public interface idao {
     double getData();
 }
 ```
 
-#### Implémentation V1 : `daoImpl.java` (`ma.ilyas.dao`)
+#### Implémentation V1 : `daoImpl.java` (`ma.mehdi.dao`)
 Simule l'accès à une base de données relationnelle. L'annotation `@Repository("d")` (stéréotype de composant pour la couche persistance/données) permet au conteneur Spring d'enregistrer ce bean sous l'identifiant `"d"`.
 ```java
-package ma.ilyas.dao;
+package ma.mehdi.dao;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -201,11 +201,11 @@ public class daoImpl implements idao {
 }
 ```
 
-#### Implémentation V2 : `daoImplV2.java` (`ma.ilyas.ext`)
+#### Implémentation V2 : `daoImplV2.java` (`ma.mehdi.ext`)
 Simule un appel à un service web distant. L'annotation `@Repository("d2")` l'enregistre avec l'identifiant `"d2"`.
 ```java
-package ma.ilyas.ext;
-import ma.ilyas.dao.idao;
+package ma.mehdi.ext;
+import ma.mehdi.dao.idao;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -224,17 +224,17 @@ public class daoImplV2 implements idao {
 
 ### 2. Couche Métier
 
-#### Interface `imetier.java` (`ma.ilyas.metier`)
+#### Interface `imetier.java` (`ma.mehdi.metier`)
 Définit le contrat de traitement métier :
 ```java
-package ma.ilyas.metier;
+package ma.mehdi.metier;
 
 public interface imetier {
     double calcul();
 }
 ```
 
-#### Implémentation : `metierImpl.java` (`ma.ilyas.metier`)
+#### Implémentation : `metierImpl.java` (`ma.mehdi.metier`)
 Cette classe est conçue selon le principe du **couplage faible** :
 - Elle possède un attribut de type `idao` (l'interface), et **aucune dépendance directe** vers `daoImpl` ou `daoImplV2`.
 - Elle supporte l'injection par **constructeur paramétré** et par **setter**.
@@ -242,8 +242,8 @@ Cette classe est conçue selon le principe du **couplage faible** :
 - Les annotations `@Autowired` et `@Qualifier("d2")` permettent l'injection automatique de l'implémentation V2 (`daoImplV2`) sans ambiguïté.
 
 ```java
-package ma.ilyas.metier;
-import ma.ilyas.dao.idao;
+package ma.mehdi.metier;
+import ma.mehdi.dao.idao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -280,10 +280,10 @@ public class metierImpl implements imetier {
 
 L'instanciation et l'injection sont codées « en dur » à l'aide du mot-clé `new` :
 ```java
-package ma.ilyas.pres;
-import ma.ilyas.dao.daoImpl;
-import ma.ilyas.ext.daoImplV2;
-import ma.ilyas.metier.metierImpl;
+package ma.mehdi.pres;
+import ma.mehdi.dao.daoImpl;
+import ma.mehdi.ext.daoImplV2;
+import ma.mehdi.metier.metierImpl;
 
 public class pres1 {
     public static void main(String[] args){
@@ -314,15 +314,15 @@ Cette approche sépare totalement le code exécutable de sa configuration.
 
 #### Fichier de configuration externe `config.txt` :
 ```text
-ma.ilyas.dao.daoImpl
-ma.ilyas.metier.metierImpl
+ma.mehdi.dao.daoImpl
+ma.mehdi.metier.metierImpl
 ```
 
 #### Code du lanceur dynamique `pres2.java` :
 ```java
-package ma.ilyas.pres;
-import ma.ilyas.dao.idao;
-import ma.ilyas.metier.imetier;
+package ma.mehdi.pres;
+import ma.mehdi.dao.idao;
+import ma.mehdi.metier.imetier;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
@@ -356,7 +356,7 @@ public class pres2 {
 
 > **Analyse & Principe OCP (Open/Closed Principle) :**
 > - L'application est **fermée à la modification** : aucune modification de code ni recompilation n'est nécessaire.
-> - L'application est **ouverte à l'extension** : pour passer au DAO V2, il suffit de remplacer la première ligne de `config.txt` par `ma.ilyas.ext.daoImplV2`.
+> - L'application est **ouverte à l'extension** : pour passer au DAO V2, il suffit de remplacer la première ligne de `config.txt` par `ma.mehdi.ext.daoImplV2`.
 
 ---
 
@@ -372,10 +372,10 @@ Ici, la gestion du cycle de vie des objets et l'injection sont déléguées au *
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- Déclaration du bean DAO (ici daoImplV2) avec l'identifiant "d" -->
-    <bean id="d" class="ma.ilyas.ext.daoImplV2"></bean>
+    <bean id="d" class="ma.mehdi.ext.daoImplV2"></bean>
 
     <!-- Déclaration du bean Métier avec injection du bean "d" via sa propriété dao (setDao) -->
-    <bean id="metier" class="ma.ilyas.metier.metierImpl">
+    <bean id="metier" class="ma.mehdi.metier.metierImpl">
         <property name="dao" ref="d"></property>
     </bean>
 
@@ -384,9 +384,9 @@ Ici, la gestion du cycle de vie des objets et l'injection sont déléguées au *
 
 #### Code du lanceur Spring XML `presSpringXML.java` :
 ```java
-package ma.ilyas.pres;
+package ma.mehdi.pres;
 
-import ma.ilyas.metier.imetier;
+import ma.mehdi.metier.imetier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -416,16 +416,16 @@ Cette approche moderne élimine le besoin de fichier XML en tirant profit des an
 
 #### Code du lanceur Spring Annotations `PresSpringAnnotation.java` :
 ```java
-package ma.ilyas.pres;
+package ma.mehdi.pres;
 
-import ma.ilyas.metier.imetier;
+import ma.mehdi.metier.imetier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class PresSpringAnnotation {
     public static void main(String[] args){
-        // Initialisation du conteneur Spring en scannant le package racine "ma.ilyas"
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext("ma.ilyas");
+        // Initialisation du conteneur Spring en scannant le package racine "ma.mehdi"
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext("ma.mehdi");
 
         // Récupération du bean de type imetier
         imetier metier = applicationContext.getBean(imetier.class);
@@ -525,5 +525,5 @@ Cette activité pratique démontre concrètement l'évolution de la gestion des 
 
 ## 👤 Auteur
 
-- **Étudiant :** **Ilyas SEKHSOUKHI**
+- **Étudiant :** **MAATA EL MEHDI**
 - **Formation :** 2ACI – Architecture JEE et Java avancé

@@ -1,4 +1,4 @@
-package ma.ilyas.dao;
+package ma.mehdi.dao;
 
 public interface idao {
     double getData();

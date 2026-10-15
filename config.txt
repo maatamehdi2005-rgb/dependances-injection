@@ -1,2 +1,2 @@
-ma.ilyas.dao.daoImpl
-ma.ilyas.metier.metierImpl
+ma.mehdi.dao.daoImpl
+ma.mehdi.metier.metierImpl

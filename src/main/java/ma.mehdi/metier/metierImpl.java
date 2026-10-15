@@ -1,4 +1,4 @@
-package ma.ilyas.metier;
+package ma.mehdi.metier;
 import ma.ilyas.dao.idao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,4 +1,4 @@
-package ma.ilyas.pres;
+package ma.mehdi.pres;
 import ma.ilyas.dao.daoImpl;
 import ma.ilyas.ext.daoImplV2;
 import ma.ilyas.metier.metierImpl;
